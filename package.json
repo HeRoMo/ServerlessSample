@@ -19,7 +19,6 @@
     "babel-plugin-source-map-support": "^1.0.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.0",
     "serverless-webpack": "^3.1.1",
     "webpack": "^3.6.0",
