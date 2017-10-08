@@ -68,7 +68,7 @@ provider:
 
 functions:
   dispatch:
-    handler: handler.dispatch
+    handler: src/handler.dispatch
     environment:
       GITHUB_TOKEN: ${file(./config/CONFIG.yml):Github.token}
       GITHUB_REPO_OWNER: ${file(./config/CONFIG.yml):Github.repo_owner}
