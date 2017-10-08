@@ -65,6 +65,9 @@ functions:
     handler: handler.hello
     environment:
       GITHUB_TOKEN: ${file(./config/CONFIG.yml):Github.token}
+      GITHUB_REPO_OWNER: ${file(./config/CONFIG.yml):Github.repo_owner}
+      GITHUB_REPO_NAME: ${file(./config/CONFIG.yml):Github.repo_name}
+      SLACK_WEBHOOK_URL: ${file(./config/CONFIG.yml):Slack.webhook_url}
     events:
       - sns: dispatch
 
