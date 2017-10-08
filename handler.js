@@ -2,6 +2,8 @@
 
 import Github from 'github-api';
 import slack from 'slack-incoming-webhook'
+import AWS from 'aws-sdk';
+const codebuild = new AWS.CodeBuild();
 
 export const hello = async (event, context, callback) => {
   if(event.Records && event.Records.length > 0 ){
@@ -12,6 +14,18 @@ export const hello = async (event, context, callback) => {
     console.log("githubEventType: %s, pullRequestAction: %s", githubEventType, pullRequestAction)
     console.log(JSON.stringify(message))
     await updatePRStatus(pullRequest)
+    const codebuildParams = {
+      projectName: process.env.CODEBUILD_PROJECT,
+      buildspecOverride: process.env.CODEBUILD_BUILDSPEC,
+      sourceVersion: pullRequest.head.sha
+    }
+    codebuild.startBuild(codebuildParams, (err, data)=>{
+      if(err){
+        console.log(err, err.stack)
+      } else {
+        console.log(JSON.stringify(data))
+      }
+    })
     await sendMessageToSlack("UNIT TEST START ")
   }
   const response = {
@@ -29,7 +43,7 @@ async function updatePRStatus(pullRequest){
   const gh = new Github({
     token: process.env.GITHUB_TOKEN
   });
-  const repo = gh.getRepo(process.env.GITHUB_REPO_OWNER,process.env.GITHUB_REPO_NAME)
+  const repo = gh.getRepo(process.env.GITHUB_REPO_OWNER, process.env.GITHUB_REPO_NAME)
   const opts = {
     state: 'pending',
     description: 'ユニットテスト実行中',

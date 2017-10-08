@@ -20,6 +20,9 @@ service: my-service
 custom:
   webpackIncludeModules: true
 
+plugins:
+  - serverless-webpack
+
 provider:
   name: aws
   runtime: nodejs6.10
@@ -28,11 +31,14 @@ provider:
 #  stage: dev
 #  region: us-east-1
 
-plugins:
-  - serverless-webpack
-
 # you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "codebuild:StartBuild"
+        - "codebuild:StopBuild"
+      Resource:
+        - '*'
 #    - Effect: "Allow"
 #      Action:
 #        - "s3:ListBucket"
@@ -68,6 +74,8 @@ functions:
       GITHUB_REPO_OWNER: ${file(./config/CONFIG.yml):Github.repo_owner}
       GITHUB_REPO_NAME: ${file(./config/CONFIG.yml):Github.repo_name}
       SLACK_WEBHOOK_URL: ${file(./config/CONFIG.yml):Slack.webhook_url}
+      CODEBUILD_PROJECT: ${file(./config/CONFIG.yml):CodeBuild.project}
+      CODEBUILD_BUILDSPEC: ${file(./config/CONFIG.yml):CodeBuild.buildspec}
     events:
       - sns: dispatch
 

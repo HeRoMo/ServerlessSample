@@ -1,2 +1,9 @@
 Github:
   token: YOUR-GITHUB-TOKEN
+  repo_owner: OWNER
+  repo_name: REPO_NAME
+Slack:
+  webhook_url: "https://hooks.slack.com/services/HOOK_URL"
+CodeBuild:
+  project: PROJ_NAME
+  buildspec: 'buildspec.yml'
