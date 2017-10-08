@@ -5,7 +5,7 @@ import slack from 'slack-incoming-webhook'
 import AWS from 'aws-sdk';
 const codebuild = new AWS.CodeBuild();
 
-export const hello = async (event, context, callback) => {
+export const dispatch = async (event, context, callback) => {
   if(event.Records && event.Records.length > 0 ){
     const githubEventType = event.Records[0].Sns.MessageAttributes["X-Github-Event"].Value
     const message = JSON.parse(event.Records[0].Sns.Message)

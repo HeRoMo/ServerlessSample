@@ -67,8 +67,8 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  hello:
-    handler: handler.hello
+  dispatch:
+    handler: handler.dispatch
     environment:
       GITHUB_TOKEN: ${file(./config/CONFIG.yml):Github.token}
       GITHUB_REPO_OWNER: ${file(./config/CONFIG.yml):Github.repo_owner}
