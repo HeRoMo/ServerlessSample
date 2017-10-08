@@ -8,3 +8,5 @@ jspm_packages
 .webpack
 doc/
 events/
+/config/*
+!/config/CONFIG_template.yml

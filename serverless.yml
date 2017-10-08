@@ -63,6 +63,8 @@ plugins:
 functions:
   hello:
     handler: handler.hello
+    environment:
+      GITHUB_TOKEN: ${file(./config/CONFIG.yml):Github.token}
     events:
       - sns: dispatch
 
