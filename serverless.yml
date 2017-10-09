@@ -84,8 +84,8 @@ functions:
     events:
       - sns: dispatch
 
-  pull_request:
-    handler: src/pull_request.synchronize
+  codebuld:
+    handler: src/codebuild.dispatch
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events

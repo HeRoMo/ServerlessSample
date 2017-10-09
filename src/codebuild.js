@@ -1,5 +1,5 @@
 
-export const synchronize = async (event, context, callback) => {
+export const dispatch = async (event, context, callback) => {
 
   console.log("EVENT: %s", JSON.stringify(event));
   const response = {
