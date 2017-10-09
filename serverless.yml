@@ -39,6 +39,11 @@ provider:
         - "codebuild:StopBuild"
       Resource:
         - '*'
+    - Effect: "Allow"
+      Action:
+        - "lambda:InvokeFunction"
+      Resource:
+        - '*'
 #    - Effect: "Allow"
 #      Action:
 #        - "s3:ListBucket"
@@ -78,6 +83,9 @@ functions:
       CODEBUILD_BUILDSPEC: ${file(./config/CONFIG.yml):CodeBuild.buildspec}
     events:
       - sns: dispatch
+
+  pull_request:
+    handler: src/pull_request.synchronize
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
