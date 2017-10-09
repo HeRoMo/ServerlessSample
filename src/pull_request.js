@@ -1,8 +1,8 @@
 'use strict';
 
-import Github from 'github-api';
 import slack from 'slack-incoming-webhook'
 import AWS from 'aws-sdk';
+import Github from './lib/github.js'
 const codebuild = new AWS.CodeBuild();
 const lambda = new AWS.Lambda();
 
@@ -32,7 +32,13 @@ export const dispatch = async (event, context, callback) => {
   switch(pullRequestAction){
     case 'opened':
     case 'synchronize':
-      await updatePRStatus(pullRequest);
+      const opts = {
+        state: 'pending',
+        description: 'ユニットテスト実行中',
+        context: 'TESTING'
+      }
+      const commitSHA = pullRequest.head.sha
+      await Github.updatePRStatus(commitSHA, opts);
       await startUnitTest(pullRequest);
       await sendMessageToSlack("UNIT TEST START")
       break;
@@ -70,22 +76,6 @@ function startUnitTest(pullRequest){
       }
     });
   })
-}
-
-async function updatePRStatus(pullRequest){
-  const gh = new Github({
-    token: process.env.GITHUB_TOKEN
-  });
-  const repo = gh.getRepo(process.env.GITHUB_REPO_OWNER, process.env.GITHUB_REPO_NAME)
-  const opts = {
-    state: 'pending',
-    description: 'ユニットテスト実行中',
-    context: 'TESTING'
-  }
-  const commitSHA = pullRequest.head.sha
-  const result = await repo.updateStatus(commitSHA, opts)
-  console.log(JSON.stringify(result.data))
-  return result.data
 }
 
 async function sendMessageToSlack(message){
