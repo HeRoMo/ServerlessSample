@@ -27,6 +27,8 @@ export const dispatch = async (event, context, callback) => {
   }
 
   const {githubEventType, pullRequestAction, pullRequest} = parseEvent(event)
+  const pullRequestTitle = pullRequest.title
+  const pullRequestUrl = pullRequest.html_url
   console.log("githubEventType: %s, pullRequestAction: %s", githubEventType, pullRequestAction)
 
   switch(pullRequestAction){
@@ -40,9 +42,14 @@ export const dispatch = async (event, context, callback) => {
       const commitSHA = pullRequest.head.sha
       await Github.updatePRStatus(commitSHA, opts);
       await startUnitTest(pullRequest);
-      await Slack.sendMessage(opts.description)
+      await Slack.sendMessage(`${pullRequestTitle} - ${opts.description}`)
       break;
     case 'closed':
+      if(pull_request.merged){
+        await Slack.sendMessage(`${pullRequestTitle} - マージされました`)
+      } else {
+        await Slack.sendMessage(`${pullRequestTitle} - マージされずに終了されました`)
+      }
       // ステージングの破棄
       break;
     default:
