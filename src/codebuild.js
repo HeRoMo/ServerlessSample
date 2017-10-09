@@ -30,9 +30,10 @@ export const dispatch = async (event, context, callback) => {
     default:
       // NO-OP
   }
-  await Github.updatePRStatus(commitSHA, githubOpts);
-  await Slack.sendMessage(githubOpts.description);
-
+  if(githubOpts.state){
+    await Github.updatePRStatus(commitSHA, githubOpts);
+    await Slack.sendMessage(githubOpts.description);
+  }
   const response = {
     statusCode: 200,
     body: JSON.stringify({
