@@ -45,7 +45,7 @@ export const dispatch = async (event, context, callback) => {
       await Slack.sendMessage(`${pullRequestTitle} - ${opts.description}`)
       break;
     case 'closed':
-      if(pull_request.merged){
+      if(pullRequest.merged){
         await Slack.sendMessage(`${pullRequestTitle} - マージされました`)
       } else {
         await Slack.sendMessage(`${pullRequestTitle} - マージされずに終了されました`)
@@ -70,6 +70,11 @@ function startUnitTest(pullRequest){
   const codebuildParams = {
     projectName: process.env.CODEBUILD_PROJECT,
     buildspecOverride: process.env.CODEBUILD_BUILDSPEC,
+    environmentVariablesOverride: [
+      { name: 'PR_NUMBER', value: `${pullRequest.number}` },
+      { name: 'PR_URL', value: pullRequest.html_url },
+      { name: 'PR_TITLE', value: pullRequest.title }
+    ],
     sourceVersion: pullRequest.head.sha
   }
   return new Promise(function(resolve, reject){
