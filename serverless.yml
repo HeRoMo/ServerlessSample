@@ -86,6 +86,11 @@ functions:
 
   codebuild:
     handler: src/codebuild.dispatch
+    environment:
+      GITHUB_TOKEN: ${file(./config/CONFIG.yml):Github.token}
+      GITHUB_REPO_OWNER: ${file(./config/CONFIG.yml):Github.repo_owner}
+      GITHUB_REPO_NAME: ${file(./config/CONFIG.yml):Github.repo_name}
+      SLACK_WEBHOOK_URL: ${file(./config/CONFIG.yml):Slack.webhook_url}
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
