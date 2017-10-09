@@ -32,7 +32,6 @@ curl -X GET \
   https://api.github.com/repos/HeRoMo/Test/hooks \
   -H 'authorization: Basic <ユーザ名:パスワードのBease64>' \
 ```
-
 2. [Edit a hook](https://developer.github.com/v3/repos/hooks/#edit-a-hook) APIで受信するイベントを変更する。
   ```
   curl -X PATCH \
