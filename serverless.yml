@@ -72,8 +72,8 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  dispatch:
-    handler: src/handler.dispatch
+  pull_request:
+    handler: src/pull_request.dispatch
     environment:
       GITHUB_TOKEN: ${file(./config/CONFIG.yml):Github.token}
       GITHUB_REPO_OWNER: ${file(./config/CONFIG.yml):Github.repo_owner}
@@ -82,9 +82,9 @@ functions:
       CODEBUILD_PROJECT: ${file(./config/CONFIG.yml):CodeBuild.project}
       CODEBUILD_BUILDSPEC: ${file(./config/CONFIG.yml):CodeBuild.buildspec}
     events:
-      - sns: dispatch
+      - sns: pull_request_dispatch
 
-  codebuld:
+  codebuild:
     handler: src/codebuild.dispatch
 
 #    The following are a few example events you can configure
