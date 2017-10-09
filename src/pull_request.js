@@ -1,8 +1,8 @@
 'use strict';
 
-import slack from 'slack-incoming-webhook'
 import AWS from 'aws-sdk';
 import Github from './lib/github.js'
+import Slack from './lib/slack.js'
 const codebuild = new AWS.CodeBuild();
 const lambda = new AWS.Lambda();
 
@@ -40,7 +40,7 @@ export const dispatch = async (event, context, callback) => {
       const commitSHA = pullRequest.head.sha
       await Github.updatePRStatus(commitSHA, opts);
       await startUnitTest(pullRequest);
-      await sendMessageToSlack("UNIT TEST START")
+      await Slack.sendMessage(opts.description)
       break;
     case 'closed':
       // ステージングの破棄
@@ -76,13 +76,6 @@ function startUnitTest(pullRequest){
       }
     });
   })
-}
-
-async function sendMessageToSlack(message){
-  const opts = {
-    url: process.env.SLACK_WEBHOOK_URL
-  }
-  slack(message, opts)
 }
 
 function invokeLambda(payload){

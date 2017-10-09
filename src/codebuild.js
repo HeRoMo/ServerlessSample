@@ -1,4 +1,5 @@
 import Github from './lib/github.js'
+import Slack from './lib/slack.js'
 
 export const dispatch = async (event, context, callback) => {
   console.log("EVENT: %s", JSON.stringify(event));
@@ -14,20 +15,23 @@ export const dispatch = async (event, context, callback) => {
       // NO-OP
       break;
     case 'SUCCEEDED':
-      githubOpts.state: 'success'
-      githubOpts.description: 'ユニットテストOK'
+      githubOpts.state = 'success'
+      githubOpts.description = 'ユニットテストOK'
       break;
     case 'FAILED':
-      githubOpts.state: 'failure'
-      githubOpts.description: 'ユニットテストNG'
+      githubOpts.state = 'failure'
+      githubOpts.description = 'ユニットテストNG'
       // currentPhase:'BUILD' 以外ではNGでなくエラーとしたほうが良いかもしれない
       break;
     case 'STOPPED':
-      githubOpts.state: 'pending'
-      githubOpts.description: 'ユニットテストが停止されました'
+      githubOpts.state = 'pending'
+      githubOpts.description = 'ユニットテストが停止されました'
       break;
+    default:
+      // NO-OP
   }
   await Github.updatePRStatus(commitSHA, githubOpts);
+  await Slack.sendMessage(githubOpts.description);
 
   const response = {
     statusCode: 200,
