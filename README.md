@@ -11,6 +11,7 @@
 GithubのPullRequestの作成、PRへのPushを Amazon SNSで受け、SNSをトリガーに実行される。
 
 処理内容は次の通り。
+
 - Pull Requestへの通知かどうかを判定
 - PR作成(action:opened) or PRへのpush(action:synchronize)の場合
   - GIthub Pull Request の status を `penging` にセット
