@@ -4,6 +4,50 @@
 
 参考：[Serverless \- AWS Documentation](https://serverless.com/framework/docs/providers/aws/)
 
+## 準備
+### Githubの設定
+ビルドの対象となるリポジトリをGithubに作成する。
+リポジトリのサンプルは [こちら](https://github.com/HeRoMo/Test)
+
+Githubの Amazon SNSとの連携は手動で実施する。
+このプロジェクトをデプロイすると作成されるSNSトピック `pull_request_dispatch` をGithubリポジトリの設定の *Integrations & services* からサービスとして追加する。
+
+この時点では、`push` イベントのみの通知される。
+GithubのAPIを使って、`pull_request` イベントを追加する必要がある。不要なら `push` イベントを削除する。
+
+** 手順 **
+
+1. [List hooks](https://developer.github.com/v3/repos/hooks/#list-hooks) APIで対象となる hookのIDを取得する
+  ```
+  $ curl -u '<ユーザ名>' https://api.github.com/repos/<Repoユーザ名>/<Repo名>/hooks
+  ```
+2. [Edit a hook](https://developer.github.com/v3/repos/hooks/#edit-a-hook) APIで受信するイベントを変更する。
+  ```
+  curl -u '<ユーザ名>' https://api.github.com/repos/<Repoユーザ名>/<Repo名>/hooks/<HookのID> -H 'content-type: application/json' -d '{ "add_events": ["pull_request"] }'
+  curl -u '<ユーザ名>' https://api.github.com/repos/<Repoユーザ名>/<Repo名>/hooks/<HookのID> -H 'content-type: application/json' -d '{ "remove_events": ["push"]}'
+  ```
+
+Githubのトークンやリポジトリ名をCONFIG.ymlに設定する。
+
+### CodeBuild プロジェクトの作成
+このLambda関数が実行しようとする CodeBuild プロジェクトを作成しておく。
+作成したプロジェクト名を CONFIG.yml に設定する。
+
+### CloudWatch Eventsの設定
+CloudWatch Eventの設定は手動で行う。
+（この設定はServerless Framework でできそうなのだが。。。）
+
+CloudWatch EventのWebコンソールで *ルールの作成* を選択して、次を設定する
+
+- **インベントパターン** にチェック
+- サービス名： **CodeBuild**
+- イベントタイプ: **CodeBuild Build State Change**
+- 任意の状態をチェック
+- ターゲットは **Lambda関数** を選択して、`my-service-dev-codebuild` を選択する。その他はデフォルトのままでOK
+
+### Slack
+Webhook の設定をしておく。
+そのURLは CONDIG.ymlに設定する。
 
 ## Functions
 ### pull_request.js
@@ -18,41 +62,9 @@ GithubのPullRequestの作成、PRへのPushを Amazon SNSで受け、SNSをト�
   - スラックへの通知
 - （結局使っていないが、他のLambda関数の実行コードも実装している）
 
-#### Githubの設定
-Githubの Amazon SNSとの連携は手動で実施する。
-このプロジェクトをデプロイすると作成されるSNSトピック `pull_request_dispatch` をGithubリポジトリの設定の *Integrations & services* からサービスとして追加する。
-
-この時点では、`push` アクションのみの通知される。
-GithubのAPIを使って、`pull_request` イベントを追加する必要がある。不要なら `push` イベントを削除する。
-
-** 手順 **
-
-1. [List hooks](https://developer.github.com/v3/repos/hooks/#list-hooks) APIで対象となる hookのIDを取得する
-  ```
-  curl -X GET \
-    https://api.github.com/repos/HeRoMo/Test/hooks \
-    -H 'authorization: Basic <ユーザ名:パスワードのBease64>' \
-  ```
-2. [Edit a hook](https://developer.github.com/v3/repos/hooks/#edit-a-hook) APIで受信するイベントを変更する。
-  ```
-  curl -X PATCH \
-    https://api.github.com/repos/<Repoユーザ名>/<Repo名>/hooks/<HookのID> \
-    -H 'authorization: Basic <ユーザ名:パスワードのBease64>' \
-    -H 'content-type: application/json' \
-    -d '{
-    "add_events": ["pull_request"]
-  }'
-  ```
-
 ### codebuild.js
 
 コードビルドの実行を CloudWatch Event で監視して、ステータスの変更イベントでトリガーする。
 
-CloudWatch Eventの設定は手動で行う。
-CloudWatch EventのWebコンソールで *ルールの作成* を選択して、次を設定する
-
-- **インベントパターン** にチェック
-- サービス名： **CodeBuild**
-- イベントタイプ: **CodeBuild Build State Change**
-- 任意の状態をチェック
-- ターゲットは **Lambda関数** を選択して、`my-service-dev-codebuild` を選択する。その他はデフォルトのままでOK
+#＃ License
+MIT
