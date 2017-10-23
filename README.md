@@ -1,4 +1,4 @@
-# My First Serverless
+# My First Serverless service
 
 [Serverless \- The Serverless Application Framework powered by AWS Lambda and API Gateway](https://serverless.com/)の調査・学習のためのプロジェクト。
 
@@ -66,5 +66,10 @@ GithubのPullRequestの作成、PRへのPushを Amazon SNSで受け、SNSをト�
 
 コードビルドの実行を CloudWatch Event で監視して、ステータスの変更イベントでトリガーする。
 
-#＃ License
+処理内容は次の通り。
+- CloudWatch Eventからのトリガーで起動
+- `SUCCEEDED`,`FAILED`の場合、Githubにその結果を通知。PRの状態を更新する
+- Slackにも通知する。
+
+## License
 MIT
