@@ -1,6 +1,6 @@
 # My First Serverless service
 
-[Serverless \- The Serverless Application Framework powered by AWS Lambda and API Gateway](https://serverless.com/)の調査・学習のためのプロジェクト。
+[Serverless Framework](https://serverless.com/)の調査・学習のためのプロジェクト。
 
 参考：[Serverless \- AWS Documentation](https://serverless.com/framework/docs/providers/aws/)
 
@@ -10,7 +10,7 @@
 リポジトリのサンプルは [こちら](https://github.com/HeRoMo/Test)
 
 Githubの Amazon SNSとの連携は手動で実施する。
-このプロジェクトをデプロイすると作成されるSNSトピック `pull_request_dispatch` をGithubリポジトリの設定の *Integrations & services* からサービスとして追加する。
+このプロジェクトをデプロイするとSNSトピック `pull_request_dispatch` がAWSに追加される。それをGithubリポジトリの設定の *Integrations & services* からサービスとして追加する。
 
 この時点では、`push` イベントのみの通知される。
 GithubのAPIを使って、`pull_request` イベントを追加する必要がある。不要なら `push` イベントを削除する。
@@ -35,9 +35,9 @@ Githubのトークンやリポジトリ名をCONFIG.ymlに設定する。
 
 ### CloudWatch Eventsの設定
 CloudWatch Eventの設定は手動で行う。
-（この設定はServerless Framework でできそうなのだが。。。）
+（この設定はServerless Framework でできそうなのだが...）。
 
-CloudWatch EventのWebコンソールで *ルールの作成* を選択して、次を設定する
+CloudWatch EventのWebコンソールで *ルールの作成* を選択して、次を設定する。
 
 - **インベントパターン** にチェック
 - サービス名： **CodeBuild**
