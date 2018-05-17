@@ -92,6 +92,18 @@ functions:
       GITHUB_REPO_OWNER: ${file(./config/CONFIG.yml):Github.repo_owner}
       GITHUB_REPO_NAME: ${file(./config/CONFIG.yml):Github.repo_name}
       SLACK_WEBHOOK_URL: ${file(./config/CONFIG.yml):Slack.webhook_url}
+    events:
+      - cloudwatchEvent:
+          event:
+            source:
+              - "aws.codebuild"
+            detail-type:
+              - "CodeBuild Build State Change"
+            detail:
+              build-status:
+                - SUCCEEDED
+                - FAILED
+                - STOPPED
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events

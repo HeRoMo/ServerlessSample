@@ -34,16 +34,27 @@ Githubのトークンやリポジトリ名をCONFIG.ymlに設定する。
 作成したプロジェクト名を CONFIG.yml に設定する。
 
 ### CloudWatch Eventsの設定
-CloudWatch Eventの設定は手動で行う。
-（この設定はServerless Framework でできそうなのだが...）。
+次の CloudWatch Event が追加される
 
-CloudWatch EventのWebコンソールで *ルールの作成* を選択して、次を設定する。
-
-- **インベントパターン** にチェック
-- サービス名： **CodeBuild**
-- イベントタイプ: **CodeBuild Build State Change**
-- 任意の状態をチェック
-- ターゲットは **Lambda関数** を選択して、`my-service-dev-codebuild` を選択する。その他はデフォルトのままでOK
+- インベントパターン
+  ```json
+  {
+    "detail-type": [
+      "CodeBuild Build State Change"
+    ],
+    "source": [
+      "aws.codebuild"
+    ],
+    "detail": {
+      "build-status": [
+        "SUCCEEDED",
+        "FAILED",
+        "STOPPED"
+      ]
+    }
+  }
+  ```
+- ターゲット **Lambda関数** `my-service-dev-codebuild`
 
 ### Slack
 Webhook の設定をしておく。
