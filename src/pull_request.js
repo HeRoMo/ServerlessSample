@@ -11,7 +11,7 @@ function parseEvent(event){
   const message = JSON.parse(event.Records[0].Sns.Message)
   const pullRequest = message.pull_request
   const pullRequestAction = message.action
-  console.log("message: %s", JSON.stringify(message))
+  console.log("SNS.Message: %s", JSON.stringify(message))
   return {
     githubEventType,
     pullRequestAction,
@@ -29,10 +29,26 @@ export const dispatch = async (event, context, callback) => {
   const {githubEventType, pullRequestAction, pullRequest} = parseEvent(event)
   const pullRequestTitle = pullRequest.title
   const pullRequestUrl = pullRequest.html_url
+  const pullRequestLabels = pullRequest.labels.map(l => l.name)
+  console.log("Pull Request Labels: %s", JSON.stringify(pullRequestLabels))
   console.log("githubEventType: %s, pullRequestAction: %s", githubEventType, pullRequestAction)
+  if (!pullRequestLabels.some(l => l === process.env.GITHUB_TEST_LABEL)) {
+    console.log("このPRはテスト対象ではありません");
+    const response = {
+      statusCode: 200,
+      body: JSON.stringify({
+        message: 'This PR is not test target !',
+        input: event,
+      }),
+    };
+    callback(null, response);
+    return
+  }
 
   switch(pullRequestAction){
     case 'opened':
+    case 'labeled':
+      console.log('added label: %s', JSON.stringify(pullRequest.label));
     case 'synchronize':
       const opts = {
         state: 'pending',

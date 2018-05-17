@@ -78,6 +78,7 @@ functions:
       GITHUB_TOKEN: ${file(./config/CONFIG.yml):Github.token}
       GITHUB_REPO_OWNER: ${file(./config/CONFIG.yml):Github.repo_owner}
       GITHUB_REPO_NAME: ${file(./config/CONFIG.yml):Github.repo_name}
+      GITHUB_TEST_LABEL: ${file(./config/CONFIG.yml):Github.test_label}
       SLACK_WEBHOOK_URL: ${file(./config/CONFIG.yml):Slack.webhook_url}
       CODEBUILD_PROJECT: ${file(./config/CONFIG.yml):CodeBuild.project}
       CODEBUILD_BUILDSPEC: ${file(./config/CONFIG.yml):CodeBuild.buildspec}
